@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="tg">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevType: Final Edition</title>
+    <title>DevType Tajikistan | Pure Code Edition</title>
     <style>
         :root {
             --bg-color: #323437;
@@ -13,10 +13,6 @@
             --sub-color: #d1d0c5;
             --error-color: #ca4754;
             --panel-bg: #2c2e31;
-            --syntax-keyword: #ff79c6;
-            --syntax-tag: #8be9fd;
-            --syntax-string: #f1fa8c;
-            --syntax-bracket: #f8f8f2;
         }
 
         body {
@@ -37,7 +33,7 @@
             border-radius: 25px;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
             border: 1px solid #3e4042;
-            max-width: 750px;
+            max-width: 800px;
             width: 90%;
             text-align: center;
             position: relative;
@@ -142,7 +138,7 @@
         #typing-area {
             font-size: 1.6rem;
             line-height: 1.4;
-            min-height: 100px;
+            min-height: 120px;
             position: relative;
             word-break: break-all;
         }
@@ -152,24 +148,8 @@
             border-left: 2px solid transparent;
         }
 
-        .char.correct.kw {
-            color: var(--syntax-keyword) !important;
-        }
-
-        .char.correct.tg {
-            color: var(--syntax-tag) !important;
-        }
-
-        .char.correct.st {
-            color: var(--syntax-string) !important;
-        }
-
-        .char.correct.br {
-            color: var(--syntax-bracket) !important;
-        }
-
         .char.correct {
-            color: var(--sub-color);
+            color: var(--sub-color) !important;
         }
 
         .char.incorrect {
@@ -217,36 +197,43 @@
             padding: 3px 0;
         }
 
+        /* ИН ҶО СЕРТИФИКАТ КАЛОН КАРДА ШУД */
         .certificate {
             background: #fff;
             color: #000;
-            padding: 40px;
-            border: 15px double var(--main-color);
+            padding: 60px;
+            border: 20px double var(--main-color);
             text-align: center;
-            border-radius: 10px;
-            max-width: 700px;
-            width: 90%;
+            border-radius: 15px;
+            max-width: 900px;
+            width: 95%;
+        }
+
+        .certificate h2 {
+            font-size: 2.8rem;
+            margin: 0;
         }
 
         .cert-name {
-            font-size: 3rem;
+            font-size: 4.5rem;
             color: #b8860b;
-            margin: 15px 0;
+            margin: 25px 0;
             font-family: serif;
             font-weight: bold;
-            border-bottom: 2px solid #b8860b;
+            border-bottom: 4px solid #b8860b;
             display: inline-block;
         }
 
         .cert-details {
-            font-size: 1.2rem;
-            margin: 10px 0;
+            font-size: 1.6rem;
+            margin: 15px 0;
             color: #333;
         }
 
         .cert-details span {
             font-weight: bold;
             color: #000;
+            font-size: 1.8rem;
         }
     </style>
 </head>
@@ -254,28 +241,28 @@
 <body onclick="document.getElementById('hidden-input').focus()">
 
     <div id="menu-panel" class="main-panel">
-        <h2 style="color: var(--sub-color); margin-bottom: 10px;">DevType <span style="color:var(--main-color)"></span>
-        </h2>
+        <h2 style="color: var(--sub-color); margin-bottom: 10px;">DevType <span
+                style="color:var(--main-color)">Tajikistan</span></h2>
         <input type="text" id="user-name" class="name-input" placeholder="Номи барномасоз..." autocomplete="off">
 
-        <span class="label">Забонҳо</span>
+        <span class="label">Забони барномасозӣ</span>
         <div class="btn-group">
             <button onclick="setMode('html')" id="btn-html" class="btn active">HTML</button>
             <button onclick="setMode('css')" id="btn-css" class="btn">CSS</button>
             <button onclick="setMode('js')" id="btn-js" class="btn">JS</button>
         </div>
 
-        <span class="label">Вақтҳо</span>
+        <span class="label">Вақт (сония)</span>
         <div class="btn-group" id="time-group">
             <button onclick="setTime(15)" class="btn">15</button>
             <button onclick="setTime(30)" class="btn active">30</button>
             <button onclick="setTime(60)" class="btn">60</button>
         </div>
 
-        <button class="start-btn" onclick="startGame()">Оғоз</button>
+        <button class="start-btn" onclick="startGame()">ОҒОЗ КАРДАН</button>
 
         <div class="leaderboard">
-            <span class="label">Сабтҳои шумо</span>
+            <span class="label">Рекордҳои ту</span>
             <div id="records-list"></div>
         </div>
     </div>
@@ -283,14 +270,14 @@
     <div id="game-panel" class="main-panel" style="display: none;">
         <div id="pause-overlay">
             <h1 style="color: var(--main-color);">ПАУЗА</h1>
-            <p>ESC барои давом додан</p>
+            <p>Барои идома ESC-ро пахш кунед</p>
         </div>
-        <div class="stats" id="game-stats">
+        <div class="stats">
             <div class="stat-group">
-                <div class="stat-item">wpm: <span id="wpm">0</span></div>
-                <div class="stat-item">acc: <span id="accuracy">100</span>%</div>
-                <div class="stat-item">time: <span id="timer">30</span></div>
-                <div class="stat-item">блок: <span id="progress">1</span>/8</div>
+                <div class="stat-item">WPM: <span id="wpm">0</span></div>
+                <div class="stat-item">Дақиқият: <span id="accuracy">100</span>%</div>
+                <div class="stat-item">Вақт: <span id="timer">30</span></div>
+                <div class="stat-item">Блок: <span id="progress">1</span>/8</div>
             </div>
             <button class="exit-btn" onclick="location.reload()">БАРОМАД</button>
         </div>
@@ -301,54 +288,64 @@
     <div id="cert-modal"
         style="display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.95); justify-content: center; align-items: center; z-index: 200;">
         <div class="certificate">
-            <h2 style="margin: 0;">СЕРТИФИКАТ</h2>
-            <p style="margin: 5px 0;">Бо ин тасдиқ карда мешавад, ки</p>
+            <h2>СЕРТИФИКАТИ МАҲОРАТ</h2>
             <div id="cert-display-name" class="cert-name">Шероз</div>
-            <p style="margin: 5px 0;">Натиҷаҳои зеринро нишон дод:</p>
-
-            <div class="cert-details">Суръат: <span id="cert-wpm">0</span> WPM</div>
-            <div class="cert-details">Дақиқи: <span id="cert-acc">0</span>%</div>
-            <div class="cert-details">Чанто калима: <span id="cert-words">0</span></div>
-            <div class="cert-details" style="color: var(--error-color);">Хатогиҳо: <span id="cert-errors">0</span></div>
-
-            <button class="btn" style="margin-top:20px; color:#000; border-color:#000;" onclick="location.reload()">Аз
-                нав</button>
+            <div class="cert-details">Суръати чоп: <span id="cert-wpm-val">0</span> WPM</div>
+            <div class="cert-details">Дақиқият: <span id="cert-acc-val">0</span>%</div>
+            <div class="cert-details">Калимаҳо: <span id="cert-words-val">0</span></div>
+            <div class="cert-details" style="color: var(--error-color);">Хатогиҳо: <span id="cert-errors-val">0</span>
+            </div>
+            <button class="btn"
+                style="margin-top:30px; font-size: 1.4rem; padding: 12px 30px; color:#000; border-color:#000;"
+                onclick="location.reload()">АЗ НАВ</button>
         </div>
     </div>
 
     <script>
         const library = {
             html: [
-                "<div class='box'></div>", "<section id='top'></section>", "<ul><li>Item</li></ul>", "<img src='i.png'>", "<a href=''>Link</a>",
-                "<button>Run</button>", "<form method='GET'>", "<table><tr><td></td></tr></table>", "<header><nav></nav></header>", "<footer><p></p></footer>",
-                "<input type='text'>", "<span>Data</span>", "<h1>Hero</h1>", "<article><h3></h3></article>", "<aside>Side</aside>", "<label>Input</label>",
-                "<nav class='wrap'></nav>", "<small>Legal</small>", "<strong>Text</strong>", "<em>Style</em>", "<iframe></iframe>", "<video autoplay></video>",
-                "<main role='main'></main>", "<code>code</code>", "<pre>pre</pre>", "<ol><li></li></ol>", "<dl><dt></dt></dl>", "<canvas></canvas>",
-                "<svg width='100'></svg>", "<hr>", "<br>", "<blockquote></blockquote>", "<cite></cite>", "<details></details>", "<summary></summary>"
+                "<div class='container-fluid'>",
+                "<html><head><title>App</title></head>",
+                "<body><header class='nav-wrapper'>",
+                "<section id='hero-section'><h1>Welcome</h1>",
+                "<img src='assets/img/hero.jpg' alt='Hero'>",
+                "<a href='https://github.com' target='_blank'>",
+                "<ul class='menu-list'><li>Home Page</li></ul>",
+                "<button type='submit' class='btn-success'>",
+                "<form action='/api/v1/auth' method='POST'>",
+                "<footer class='main-footer'><p>Copyright</p></footer>",
+                "<table><thead><tr><th>Username</th></tr></thead></table>",
+                "<nav><ol><li>About</li><li>Contact</li></ol></nav>"
             ],
             css: [
-                "body { margin: 0; }", ".card { display: flex; }", "h1 { color: #f1c40f; }", "position: relative; top: 5px;", "box-sizing: border-box;",
-                "background: linear-gradient();", "width: calc(100% - 20px);", "border: 2px solid red;", "border-radius: 50%;", "text-align: right;",
-                "font-family: 'Arial'; font-size: 1.2rem;", "z-index: 1000; transition: 0.5s;", "cursor: pointer; opacity: 0.8;", "grid-template-columns: 1fr;",
-                "box-shadow: 0 4px 8px gray;", "flex-direction: column; justify-content: center;", "align-items: baseline; padding: 10px 5px;",
-                "overflow: hidden; white-space: nowrap;", "visibility: visible; pointer-events: all;", "list-style-type: none;", "text-decoration: underline;",
-                "outline: none; float: left; clear: both;", "vertical-align: middle; letter-spacing: 1px;", "word-break: break-all; font-weight: bold;",
-                "animation: slideIn 2s ease;", "filter: blur(5px); transform: scale(1.1);", "@media (max-width: 600px) { }", "background-image: url();"
+                "body { margin: 0; padding: 0; box-sizing: border-box; }",
+                ".flex-center { display: flex; align-items: center; }",
+                "h1 { color: #f1c40f; font-size: 2rem; font-weight: 700; }",
+                ".card { background: #1a1a1a; border: 1px solid #333; }",
+                "@media screen and (max-width: 600px) { .row { gap: 10px; } }",
+                "button:active { transform: scale(0.95); opacity: 0.8; }",
+                "input:focus { border-color: var(--main-color); outline: none; }",
+                ".glass-effect { backdrop-filter: blur(10px); background: none; }",
+                "span.label { color: #666; text-transform: lowercase; }",
+                "p.text-muted { font-style: italic; color: #888; }"
             ],
             js: [
-                "const x = 100;", "function update() { }", "if (score > high) { }", "let data = [1, 2, 3];", "console.info('Done');", "window.scrollTo(0, 0);",
-                "setTimeout(() => { }, 1000);", "const res = await api();", "Math.floor(Math.random() * 10);", "document.getElementById('id');",
-                "export default class App { }", "while (i < items.length) { }", "for (let i = 0; i < 10; i++)", "try { start(); } catch(e) { }",
-                "return { status: 200 };", "Array.from(nodeList).map();", "Object.entries(userData);", "JSON.parse(storedData);", "localStorage.setItem('k', 'v');",
-                "location.href = '/home';", "const { name, age } = user;", "const newArr = [...oldArr];", "element.classList.toggle('active');",
-                "new Promise((res, rej) => { });", "Number.parseFloat('3.14');", "text.replace(/a/g, 'b');", "history.back(); console.table(arr);",
-                "document.body.appendChild(el);", "event.preventDefault(); event.stopPropagation();", "Object.assign(target, source);"
+                "const settings = { theme: 'dark', lang: 'en', id: 101 };",
+                "async function getData() { const res = await fetch(url); }",
+                "if (score >= limit) { return notify('Win'); }",
+                "const users = ['Admin', 'Editor', 'Viewer', 'Guest'];",
+                "document.querySelector('.app').innerHTML = 'Loading...';",
+                "const result = items.map(x => x.price * 1.2);",
+                "localStorage.setItem('session_token', btoa(token));",
+                "window.addEventListener('resize', () => handleResize());",
+                "class AppController { constructor() { this.init(); } }",
+                "export const VERSION = '3.0.1'; console.log(VERSION);"
             ]
         };
 
         let currentMode = 'html', timeLeft = 30, selectedTime = 30, timer = null, isRunning = false, isPaused = false;
         let charIndex = 0, currentBlockIndex = 0, gameBlocks = [];
-        let totalErrorsCount = 0;
+        let totalErrorsCount = 0, totalTypedCharsCount = 0;
 
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playSound(freq, type, dur) {
@@ -381,15 +378,12 @@
 
         function startGame() {
             const name = document.getElementById('user-name').value.trim();
-            if (!name) return alert("Введи имя!");
+            if (!name) return alert("Номи худро ворид кунед!");
             document.getElementById('menu-panel').style.display = 'none';
             document.getElementById('game-panel').style.display = 'block';
-            let shuffled = [...library[currentMode]].sort(() => Math.random() - 0.5);
-            gameBlocks = shuffled.slice(0, 8);
-            currentBlockIndex = 0;
-            totalErrorsCount = 0;
-            isRunning = false;
-            timeLeft = selectedTime;
+            gameBlocks = [...library[currentMode]].sort(() => Math.random() - 0.5).slice(0, 8);
+            currentBlockIndex = 0; totalErrorsCount = 0; totalTypedCharsCount = 0;
+            isRunning = false; timeLeft = selectedTime;
             document.getElementById('timer').innerText = timeLeft;
             renderBlock();
         }
@@ -398,34 +392,14 @@
             document.getElementById('progress').innerText = currentBlockIndex + 1;
             const area = document.getElementById('typing-area');
             area.innerHTML = "";
-            const text = gameBlocks[currentBlockIndex];
-
-            const keywords = ['const', 'let', 'function', 'if', 'return', 'while', 'for', 'export', 'try', 'catch', 'await', 'new', 'case', 'switch', 'default', 'class', 'import', 'from'];
-            const tags = ['div', 'h1', 'h2', 'h3', 'p', 'nav', 'ul', 'li', 'form', 'input', 'footer', 'section', 'span', 'header', 'article', 'aside', 'label', 'button', 'img', 'a', 'table', 'tr', 'td', 'small', 'strong', 'em', 'code', 'pre', 'ol', 'dl', 'dt', 'hr', 'br', 'canvas', 'svg', 'main', 'iframe', 'video', 'details', 'summary'];
-
-            text.split("").forEach((c) => {
+            gameBlocks[currentBlockIndex].split("").forEach((c) => {
                 const span = document.createElement('span');
                 span.className = 'char';
                 span.innerText = c;
                 span.dataset.orig = c;
-                if (['<', '>', '/', '{', '}', '(', ')', '=', ';', ':', '[', ']', '.', "'", '"', '!', '-', '+', '*', '&', '|'].includes(c)) span.classList.add('br');
-                else if (['"', "'"].includes(c)) span.classList.add('st');
                 area.appendChild(span);
             });
-
-            const chars = area.querySelectorAll('.char');
-            let words = text.split(/([^a-z0-9])/i);
-            let pos = 0;
-            words.forEach(word => {
-                if (keywords.includes(word)) {
-                    for (let j = 0; j < word.length; j++) if (chars[pos + j]) chars[pos + j].classList.add('kw');
-                } else if (tags.includes(word)) {
-                    for (let j = 0; j < word.length; j++) if (chars[pos + j]) chars[pos + j].classList.add('tg');
-                }
-                pos += word.length;
-            });
-
-            chars[0].classList.add('current');
+            document.querySelectorAll('.char')[0].classList.add('current');
             charIndex = 0;
             document.getElementById('hidden-input').value = "";
         }
@@ -437,25 +411,21 @@
             const chars = document.querySelectorAll('.char');
             const inputVal = e.target.value;
 
-            if (inputVal.length > charIndex) playSound(400, 'sine', 0.05);
+            if (inputVal.length > charIndex) {
+                playSound(400, 'sine', 0.05);
+                totalTypedCharsCount++;
+            }
             charIndex = inputVal.length;
 
             chars.forEach((char, i) => {
                 char.classList.remove('current', 'correct', 'incorrect');
                 const origChar = char.dataset.orig;
-
                 if (i < charIndex) {
-                    const typedChar = inputVal[i];
-                    if (typedChar === origChar) {
-                        char.classList.add('correct');
-                        char.innerText = origChar;
-                    } else {
+                    if (inputVal[i] === origChar) char.classList.add('correct');
+                    else {
                         char.classList.add('incorrect');
-                        char.innerText = typedChar;
-                        if (i === charIndex - 1) {
-                            playSound(150, 'square', 0.1);
-                            totalErrorsCount++;
-                        }
+                        char.innerText = inputVal[i];
+                        if (i === charIndex - 1) { playSound(150, 'square', 0.1); totalErrorsCount++; }
                     }
                 } else {
                     char.innerText = origChar;
@@ -482,45 +452,35 @@
             if (timer) clearInterval(timer);
             timer = setInterval(() => {
                 if (!isPaused) {
-                    if (timeLeft > 0) {
-                        timeLeft--;
-                        document.getElementById('timer').innerText = timeLeft;
-                    } else { finishGame(); }
+                    if (timeLeft > 0) { timeLeft--; document.getElementById('timer').innerText = timeLeft; }
+                    else { finishGame(); }
+                    updateStats();
                 }
             }, 1000);
         }
 
         function updateStats() {
-            let totalChars = (currentBlockIndex * 15) + charIndex;
             let timeElapsed = (selectedTime - timeLeft) || 1;
-            let wpm = Math.round((totalChars / 5) / (timeElapsed / 60));
+            let wpm = Math.round((totalTypedCharsCount / 5) / (timeElapsed / 60)) || 0;
+            let acc = Math.round(((totalTypedCharsCount - totalErrorsCount) / totalTypedCharsCount) * 100) || 100;
             document.getElementById('wpm').innerText = wpm;
-            let currentErrors = document.querySelectorAll('.incorrect').length;
-            let acc = Math.round(((totalChars - currentErrors) / totalChars) * 100) || 100;
-            document.getElementById('accuracy').innerText = acc;
+            document.getElementById('accuracy').innerText = (acc < 0) ? 0 : acc;
         }
 
         function finishGame() {
             clearInterval(timer);
-            const wpm = document.getElementById('wpm').innerText;
-            const acc = document.getElementById('accuracy').innerText;
-            const name = document.getElementById('user-name').value;
-
-            // Расчет общего количества слов (1 слово = 5 символов)
-            let totalCharsFinal = (currentBlockIndex * 15) + charIndex;
-            let totalWords = Math.round(totalCharsFinal / 5);
-
             document.getElementById('cert-modal').style.display = 'flex';
-            document.getElementById('cert-display-name').innerText = name;
-            document.getElementById('cert-wpm').innerText = wpm;
-            document.getElementById('cert-acc').innerText = acc;
-            document.getElementById('cert-words').innerText = totalWords;
-            document.getElementById('cert-errors').innerText = totalErrorsCount;
+            document.getElementById('cert-display-name').innerText = document.getElementById('user-name').value;
+            document.getElementById('cert-wpm-val').innerText = document.getElementById('wpm').innerText;
+            document.getElementById('cert-acc-val').innerText = document.getElementById('accuracy').innerText;
+            document.getElementById('cert-words-val').innerText = Math.round(totalTypedCharsCount / 5);
+            document.getElementById('cert-errors-val').innerText = totalErrorsCount;
 
             let records = JSON.parse(localStorage.getItem('devTypeRecords') || '[]');
-            records.push({ name, wpm: parseInt(wpm) });
+            records.push({ name: document.getElementById('user-name').value, wpm: parseInt(document.getElementById('wpm').innerText) });
             records.sort((a, b) => b.wpm - a.wpm);
-            localStorage.setItem('devTypeRecords', JSON.stringify(records.slice(0, 5)));
+            localStorage.setItem('devTypeRecords', JSON.stringify(records.slice(0, 3)));
+            updateLeaderboard();
         }
     </script>
 </body>
