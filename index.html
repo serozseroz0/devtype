@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevType: Final Edition</title>
+    <style>
+        :root {
+            --bg-color: #323437;
+            --main-color: #e2b714;
+            --text-color: #646669;
+            --sub-color: #d1d0c5;
+            --error-color: #ca4754;
+            --panel-bg: #2c2e31;
+            --syntax-keyword: #ff79c6;
+            --syntax-tag: #8be9fd;
+            --syntax-string: #f1fa8c;
+            --syntax-bracket: #f8f8f2;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Consolas', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .main-panel {
+            background-color: var(--panel-bg);
+            padding: 40px;
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            border: 1px solid #3e4042;
+            max-width: 750px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+        }
+
+        input.name-input {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid var(--text-color);
+            color: var(--main-color);
+            font-size: 1.5rem;
+            padding: 10px;
+            text-align: center;
+            outline: none;
+            width: 60%;
+            margin-bottom: 15px;
+        }
+
+        .label {
+            display: block;
+            font-size: 0.7rem;
+            margin: 10px 0 5px;
+            color: var(--text-color);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            background: none;
+            border: 1px solid var(--text-color);
+            color: var(--text-color);
+            padding: 8px 16px;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .btn.active {
+            color: var(--main-color);
+            border-color: var(--main-color);
+            background: rgba(226, 183, 20, 0.1);
+        }
+
+        .start-btn {
+            background: var(--main-color);
+            color: #000;
+            border: none;
+            padding: 12px 40px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1rem;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+
+        .exit-btn {
+            background: rgba(202, 71, 84, 0.1);
+            color: var(--error-color);
+            border: 1px solid var(--error-color);
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            transition: 0.3s;
+        }
+
+        .exit-btn:hover {
+            background: var(--error-color);
+            color: #fff;
+        }
+
+        #game-panel {
+            text-align: left;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+
+        .stat-group {
+            display: flex;
+            gap: 30px;
+        }
+
+        .stat-item span {
+            color: var(--main-color);
+            font-weight: bold;
+        }
+
+        #typing-area {
+            font-size: 1.6rem;
+            line-height: 1.4;
+            min-height: 100px;
+            position: relative;
+            word-break: break-all;
+        }
+
+        .char {
+            color: var(--text-color);
+            border-left: 2px solid transparent;
+        }
+
+        .char.correct.kw {
+            color: var(--syntax-keyword) !important;
+        }
+
+        .char.correct.tg {
+            color: var(--syntax-tag) !important;
+        }
+
+        .char.correct.st {
+            color: var(--syntax-string) !important;
+        }
+
+        .char.correct.br {
+            color: var(--syntax-bracket) !important;
+        }
+
+        .char.correct {
+            color: var(--sub-color);
+        }
+
+        .char.incorrect {
+            color: var(--error-color) !important;
+            background: rgba(202, 71, 84, 0.2);
+            text-decoration: underline;
+        }
+
+        .char.current {
+            border-left: 2px solid var(--main-color);
+        }
+
+        #hidden-input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #pause-overlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(44, 46, 49, 0.9);
+            border-radius: 25px;
+            z-index: 10;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .leaderboard {
+            margin-top: 20px;
+            font-size: 0.8rem;
+            border-top: 1px solid #3e4042;
+            padding-top: 10px;
+            text-align: center;
+        }
+
+        .record-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 3px 0;
+        }
+
+        .certificate {
+            background: #fff;
+            color: #000;
+            padding: 40px;
+            border: 15px double var(--main-color);
+            text-align: center;
+            border-radius: 10px;
+            max-width: 700px;
+            width: 90%;
+        }
+
+        .cert-name {
+            font-size: 3rem;
+            color: #b8860b;
+            margin: 15px 0;
+            font-family: serif;
+            font-weight: bold;
+            border-bottom: 2px solid #b8860b;
+            display: inline-block;
+        }
+
+        .cert-details {
+            font-size: 1.2rem;
+            margin: 10px 0;
+            color: #333;
+        }
+
+        .cert-details span {
+            font-weight: bold;
+            color: #000;
+        }
+    </style>
+</head>
+
+<body onclick="document.getElementById('hidden-input').focus()">
+
+    <div id="menu-panel" class="main-panel">
+        <h2 style="color: var(--sub-color); margin-bottom: 10px;">DevType <span style="color:var(--main-color)"></span>
+        </h2>
+        <input type="text" id="user-name" class="name-input" placeholder="Номи барномасоз..." autocomplete="off">
+
+        <span class="label">Забонҳо</span>
+        <div class="btn-group">
+            <button onclick="setMode('html')" id="btn-html" class="btn active">HTML</button>
+            <button onclick="setMode('css')" id="btn-css" class="btn">CSS</button>
+            <button onclick="setMode('js')" id="btn-js" class="btn">JS</button>
+        </div>
+
+        <span class="label">Вақтҳо</span>
+        <div class="btn-group" id="time-group">
+            <button onclick="setTime(15)" class="btn">15</button>
+            <button onclick="setTime(30)" class="btn active">30</button>
+            <button onclick="setTime(60)" class="btn">60</button>
+        </div>
+
+        <button class="start-btn" onclick="startGame()">Оғоз</button>
+
+        <div class="leaderboard">
+            <span class="label">Сабтҳои шумо</span>
+            <div id="records-list"></div>
+        </div>
+    </div>
+
+    <div id="game-panel" class="main-panel" style="display: none;">
+        <div id="pause-overlay">
+            <h1 style="color: var(--main-color);">ПАУЗА</h1>
+            <p>ESC барои давом додан</p>
+        </div>
+        <div class="stats" id="game-stats">
+            <div class="stat-group">
+                <div class="stat-item">wpm: <span id="wpm">0</span></div>
+                <div class="stat-item">acc: <span id="accuracy">100</span>%</div>
+                <div class="stat-item">time: <span id="timer">30</span></div>
+                <div class="stat-item">блок: <span id="progress">1</span>/8</div>
+            </div>
+            <button class="exit-btn" onclick="location.reload()">БАРОМАД</button>
+        </div>
+        <input type="text" id="hidden-input" autocomplete="off" spellcheck="false">
+        <div id="typing-area"></div>
+    </div>
+
+    <div id="cert-modal"
+        style="display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.95); justify-content: center; align-items: center; z-index: 200;">
+        <div class="certificate">
+            <h2 style="margin: 0;">СЕРТИФИКАТ</h2>
+            <p style="margin: 5px 0;">Бо ин тасдиқ карда мешавад, ки</p>
+            <div id="cert-display-name" class="cert-name">Шероз</div>
+            <p style="margin: 5px 0;">Натиҷаҳои зеринро нишон дод:</p>
+
+            <div class="cert-details">Суръат: <span id="cert-wpm">0</span> WPM</div>
+            <div class="cert-details">Дақиқи: <span id="cert-acc">0</span>%</div>
+            <div class="cert-details">Чанто калима: <span id="cert-words">0</span></div>
+            <div class="cert-details" style="color: var(--error-color);">Хатогиҳо: <span id="cert-errors">0</span></div>
+
+            <button class="btn" style="margin-top:20px; color:#000; border-color:#000;" onclick="location.reload()">Аз
+                нав</button>
+        </div>
+    </div>
+
+    <script>
+        const library = {
+            html: [
+                "<div class='box'></div>", "<section id='top'></section>", "<ul><li>Item</li></ul>", "<img src='i.png'>", "<a href=''>Link</a>",
+                "<button>Run</button>", "<form method='GET'>", "<table><tr><td></td></tr></table>", "<header><nav></nav></header>", "<footer><p></p></footer>",
+                "<input type='text'>", "<span>Data</span>", "<h1>Hero</h1>", "<article><h3></h3></article>", "<aside>Side</aside>", "<label>Input</label>",
+                "<nav class='wrap'></nav>", "<small>Legal</small>", "<strong>Text</strong>", "<em>Style</em>", "<iframe></iframe>", "<video autoplay></video>",
+                "<main role='main'></main>", "<code>code</code>", "<pre>pre</pre>", "<ol><li></li></ol>", "<dl><dt></dt></dl>", "<canvas></canvas>",
+                "<svg width='100'></svg>", "<hr>", "<br>", "<blockquote></blockquote>", "<cite></cite>", "<details></details>", "<summary></summary>"
+            ],
+            css: [
+                "body { margin: 0; }", ".card { display: flex; }", "h1 { color: #f1c40f; }", "position: relative; top: 5px;", "box-sizing: border-box;",
+                "background: linear-gradient();", "width: calc(100% - 20px);", "border: 2px solid red;", "border-radius: 50%;", "text-align: right;",
+                "font-family: 'Arial'; font-size: 1.2rem;", "z-index: 1000; transition: 0.5s;", "cursor: pointer; opacity: 0.8;", "grid-template-columns: 1fr;",
+                "box-shadow: 0 4px 8px gray;", "flex-direction: column; justify-content: center;", "align-items: baseline; padding: 10px 5px;",
+                "overflow: hidden; white-space: nowrap;", "visibility: visible; pointer-events: all;", "list-style-type: none;", "text-decoration: underline;",
+                "outline: none; float: left; clear: both;", "vertical-align: middle; letter-spacing: 1px;", "word-break: break-all; font-weight: bold;",
+                "animation: slideIn 2s ease;", "filter: blur(5px); transform: scale(1.1);", "@media (max-width: 600px) { }", "background-image: url();"
+            ],
+            js: [
+                "const x = 100;", "function update() { }", "if (score > high) { }", "let data = [1, 2, 3];", "console.info('Done');", "window.scrollTo(0, 0);",
+                "setTimeout(() => { }, 1000);", "const res = await api();", "Math.floor(Math.random() * 10);", "document.getElementById('id');",
+                "export default class App { }", "while (i < items.length) { }", "for (let i = 0; i < 10; i++)", "try { start(); } catch(e) { }",
+                "return { status: 200 };", "Array.from(nodeList).map();", "Object.entries(userData);", "JSON.parse(storedData);", "localStorage.setItem('k', 'v');",
+                "location.href = '/home';", "const { name, age } = user;", "const newArr = [...oldArr];", "element.classList.toggle('active');",
+                "new Promise((res, rej) => { });", "Number.parseFloat('3.14');", "text.replace(/a/g, 'b');", "history.back(); console.table(arr);",
+                "document.body.appendChild(el);", "event.preventDefault(); event.stopPropagation();", "Object.assign(target, source);"
+            ]
+        };
+
+        let currentMode = 'html', timeLeft = 30, selectedTime = 30, timer = null, isRunning = false, isPaused = false;
+        let charIndex = 0, currentBlockIndex = 0, gameBlocks = [];
+        let totalErrorsCount = 0;
+
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playSound(freq, type, dur) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + dur);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + dur);
+        }
+
+        function setMode(m) {
+            currentMode = m;
+            document.querySelectorAll('.btn-group .btn').forEach(b => {
+                if (['html', 'css', 'js'].includes(b.id?.replace('btn-', ''))) b.classList.toggle('active', b.id === 'btn-' + m);
+            });
+        }
+
+        function setTime(s) {
+            selectedTime = s; timeLeft = s;
+            document.querySelectorAll('#time-group .btn').forEach(b => b.classList.toggle('active', parseInt(b.innerText) === s));
+        }
+
+        function updateLeaderboard() {
+            const records = JSON.parse(localStorage.getItem('devTypeRecords') || '[]');
+            const list = document.getElementById('records-list');
+            list.innerHTML = records.slice(0, 3).map(r => `<div class="record-item"><span>${r.name}</span><span>${r.wpm} WPM</span></div>`).join('');
+        }
+        updateLeaderboard();
+
+        function startGame() {
+            const name = document.getElementById('user-name').value.trim();
+            if (!name) return alert("Введи имя!");
+            document.getElementById('menu-panel').style.display = 'none';
+            document.getElementById('game-panel').style.display = 'block';
+            let shuffled = [...library[currentMode]].sort(() => Math.random() - 0.5);
+            gameBlocks = shuffled.slice(0, 8);
+            currentBlockIndex = 0;
+            totalErrorsCount = 0;
+            isRunning = false;
+            timeLeft = selectedTime;
+            document.getElementById('timer').innerText = timeLeft;
+            renderBlock();
+        }
+
+        function renderBlock() {
+            document.getElementById('progress').innerText = currentBlockIndex + 1;
+            const area = document.getElementById('typing-area');
+            area.innerHTML = "";
+            const text = gameBlocks[currentBlockIndex];
+
+            const keywords = ['const', 'let', 'function', 'if', 'return', 'while', 'for', 'export', 'try', 'catch', 'await', 'new', 'case', 'switch', 'default', 'class', 'import', 'from'];
+            const tags = ['div', 'h1', 'h2', 'h3', 'p', 'nav', 'ul', 'li', 'form', 'input', 'footer', 'section', 'span', 'header', 'article', 'aside', 'label', 'button', 'img', 'a', 'table', 'tr', 'td', 'small', 'strong', 'em', 'code', 'pre', 'ol', 'dl', 'dt', 'hr', 'br', 'canvas', 'svg', 'main', 'iframe', 'video', 'details', 'summary'];
+
+            text.split("").forEach((c) => {
+                const span = document.createElement('span');
+                span.className = 'char';
+                span.innerText = c;
+                span.dataset.orig = c;
+                if (['<', '>', '/', '{', '}', '(', ')', '=', ';', ':', '[', ']', '.', "'", '"', '!', '-', '+', '*', '&', '|'].includes(c)) span.classList.add('br');
+                else if (['"', "'"].includes(c)) span.classList.add('st');
+                area.appendChild(span);
+            });
+
+            const chars = area.querySelectorAll('.char');
+            let words = text.split(/([^a-z0-9])/i);
+            let pos = 0;
+            words.forEach(word => {
+                if (keywords.includes(word)) {
+                    for (let j = 0; j < word.length; j++) if (chars[pos + j]) chars[pos + j].classList.add('kw');
+                } else if (tags.includes(word)) {
+                    for (let j = 0; j < word.length; j++) if (chars[pos + j]) chars[pos + j].classList.add('tg');
+                }
+                pos += word.length;
+            });
+
+            chars[0].classList.add('current');
+            charIndex = 0;
+            document.getElementById('hidden-input').value = "";
+        }
+
+        document.getElementById('hidden-input').addEventListener('input', (e) => {
+            if (isPaused) return;
+            if (!isRunning) { isRunning = true; startTimer(); }
+
+            const chars = document.querySelectorAll('.char');
+            const inputVal = e.target.value;
+
+            if (inputVal.length > charIndex) playSound(400, 'sine', 0.05);
+            charIndex = inputVal.length;
+
+            chars.forEach((char, i) => {
+                char.classList.remove('current', 'correct', 'incorrect');
+                const origChar = char.dataset.orig;
+
+                if (i < charIndex) {
+                    const typedChar = inputVal[i];
+                    if (typedChar === origChar) {
+                        char.classList.add('correct');
+                        char.innerText = origChar;
+                    } else {
+                        char.classList.add('incorrect');
+                        char.innerText = typedChar;
+                        if (i === charIndex - 1) {
+                            playSound(150, 'square', 0.1);
+                            totalErrorsCount++;
+                        }
+                    }
+                } else {
+                    char.innerText = origChar;
+                }
+            });
+
+            if (charIndex < chars.length) chars[charIndex].classList.add('current');
+            else {
+                currentBlockIndex++;
+                if (currentBlockIndex < 8) renderBlock();
+                else finishGame();
+            }
+            updateStats();
+        });
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === "Escape" && isRunning) {
+                isPaused = !isPaused;
+                document.getElementById('pause-overlay').style.display = isPaused ? 'flex' : 'none';
+            }
+        });
+
+        function startTimer() {
+            if (timer) clearInterval(timer);
+            timer = setInterval(() => {
+                if (!isPaused) {
+                    if (timeLeft > 0) {
+                        timeLeft--;
+                        document.getElementById('timer').innerText = timeLeft;
+                    } else { finishGame(); }
+                }
+            }, 1000);
+        }
+
+        function updateStats() {
+            let totalChars = (currentBlockIndex * 15) + charIndex;
+            let timeElapsed = (selectedTime - timeLeft) || 1;
+            let wpm = Math.round((totalChars / 5) / (timeElapsed / 60));
+            document.getElementById('wpm').innerText = wpm;
+            let currentErrors = document.querySelectorAll('.incorrect').length;
+            let acc = Math.round(((totalChars - currentErrors) / totalChars) * 100) || 100;
+            document.getElementById('accuracy').innerText = acc;
+        }
+
+        function finishGame() {
+            clearInterval(timer);
+            const wpm = document.getElementById('wpm').innerText;
+            const acc = document.getElementById('accuracy').innerText;
+            const name = document.getElementById('user-name').value;
+
+            // Расчет общего количества слов (1 слово = 5 символов)
+            let totalCharsFinal = (currentBlockIndex * 15) + charIndex;
+            let totalWords = Math.round(totalCharsFinal / 5);
+
+            document.getElementById('cert-modal').style.display = 'flex';
+            document.getElementById('cert-display-name').innerText = name;
+            document.getElementById('cert-wpm').innerText = wpm;
+            document.getElementById('cert-acc').innerText = acc;
+            document.getElementById('cert-words').innerText = totalWords;
+            document.getElementById('cert-errors').innerText = totalErrorsCount;
+
+            let records = JSON.parse(localStorage.getItem('devTypeRecords') || '[]');
+            records.push({ name, wpm: parseInt(wpm) });
+            records.sort((a, b) => b.wpm - a.wpm);
+            localStorage.setItem('devTypeRecords', JSON.stringify(records.slice(0, 5)));
+        }
+    </script>
+</body>
+
+</html>
