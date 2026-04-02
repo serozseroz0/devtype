@@ -28,7 +28,6 @@
             background: #f8fafc;
         }
 
-        /* АНИМАТСИЯИ ФОН (BACKGROUND ANIMATION) */
         .bg-animate {
             position: fixed;
             top: 0;
@@ -68,7 +67,6 @@
             }
         }
 
-        /* ОРОИШИ ПУШТИ ОКНОИ МЕНЮ (INTERNAL PANEL STYLE) */
         .main-panel {
             background: var(--panel-bg);
             backdrop-filter: blur(15px);
@@ -82,10 +80,8 @@
             position: relative;
             z-index: 10;
             overflow: hidden;
-            /* Барои он ки рамзҳо аз канори блок набароянд */
         }
 
-        /* АНИМАТСИЯИ МАХСУС БАРОИ ПУШТИ МЕНЮ */
         #menu-panel::after {
             content: "";
             position: absolute;
@@ -108,7 +104,6 @@
             }
         }
 
-        /* РАМЗҲОИ БАРНОМАСОЗӢ ДАР ПУШТИ МЕНЮ */
         .code-symbol {
             position: absolute;
             font-size: 8rem;
@@ -197,6 +192,11 @@
             margin-top: 20px;
             min-height: 120px;
             word-break: break-all;
+            position: relative;
+        }
+
+        .char {
+            position: relative;
         }
 
         .char.correct {
@@ -212,7 +212,7 @@
         .char.incorrect::after {
             content: attr(data-user-char);
             position: absolute;
-            top: -20px;
+            top: -25px;
             left: 0;
             font-size: 0.9rem;
             color: var(--error-color);
@@ -220,6 +220,9 @@
             background: white;
             padding: 0 4px;
             border-radius: 4px;
+            border: 1px solid var(--error-color);
+            white-space: nowrap;
+            z-index: 20;
         }
 
         .char.current {
@@ -354,11 +357,11 @@
         <div class="code-symbol" style="top: -20px; left: -20px;">{ }</div>
         <div class="code-symbol" style="bottom: -20px; right: -20px; font-size: 6rem;">&lt;/&gt;</div>
 
-        <h1 class="header-title">DevType <span>Tajikistan</span></h1>
+        <h1 class="header-title"><span>DevType</span></h1>
 
         <input type="text" id="user-name"
             style="padding:15px; border-radius:15px; border:2px solid #e2e8f0; width:85%; text-align:center; outline:none; font-size: 1rem;"
-            placeholder="Номи ту...">
+            placeholder="Номи шумо...">
 
         <span class="label">Забони код</span>
         <div class="btn-group">
@@ -378,7 +381,7 @@
         <div class="btn-group">
             <button onclick="setLevel('easy')" id="l-easy" class="btn">Осон</button>
             <button onclick="setLevel('mid')" id="l-mid" class="btn active">Миёна</button>
-            <button onclick="setLevel('hard')" id="l-hard" class="btn">Pro</button>
+            <button onclick="setLevel('hard')" id="l-hard" class="btn">Душвор</button>
         </div>
 
         <button class="start-btn" onclick="startGame()">ОҒОЗИ БОЗӢ</button>
@@ -411,7 +414,7 @@
                 </div>
                 <div class="stat-item"><span class="label">CPS</span><span id="res-cps" class="stat-num">0</span></div>
             </div>
-            <button class="start-btn" onclick="location.reload()">БОЗГАШТ</button>
+            <button class="start-btn" onclick="location.reload()">Аз нав</button>
         </div>
     </div>
 
@@ -517,14 +520,24 @@
 
             const chars = document.querySelectorAll('.char');
             const val = e.target.value;
+
             if (val.length > charIndex) {
-                if (val[val.length - 1] === currentBlockStr[charIndex]) correctChars++;
-                else errors++;
+                let lastChar = val[val.length - 1];
+                if (lastChar === currentBlockStr[charIndex]) {
+                    correctChars++;
+                } else {
+                    errors++;
+                    // МАҲЗ ҲАМИН ҶО: ба ҳарфи нодуруст атрибути маълумотро илова мекунем
+                    chars[charIndex].setAttribute('data-user-char', lastChar === " " ? "_" : lastChar);
+                }
             }
+
             charIndex = val.length;
             chars.forEach((char, i) => {
                 char.classList.remove('current', 'correct', 'incorrect');
-                if (i < charIndex) char.classList.add(val[i] === currentBlockStr[i] ? 'correct' : 'incorrect');
+                if (i < charIndex) {
+                    char.classList.add(val[i] === currentBlockStr[i] ? 'correct' : 'incorrect');
+                }
             });
             if (charIndex < chars.length) chars[charIndex].classList.add('current');
             else generateNewBlock();
