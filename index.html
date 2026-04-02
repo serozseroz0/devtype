@@ -4,483 +4,545 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevType Tajikistan | Pure Code Edition</title>
+    <title>DevType Tajikistan | Error Feedback</title>
     <style>
         :root {
-            --bg-color: #323437;
-            --main-color: #e2b714;
-            --text-color: #646669;
-            --sub-color: #d1d0c5;
-            --error-color: #ca4754;
-            --panel-bg: #2c2e31;
+            --main-color: #6366f1;
+            --error-color: #ef4444;
+            --panel-bg: rgba(255, 255, 255, 0.9);
+            --text-main: #1e293b;
+            --text-sub: #94a3b8;
         }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: 'Consolas', monospace;
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
+            background: #f8fafc;
         }
 
+        /* АНИМАТСИЯИ ФОН (BACKGROUND ANIMATION) */
+        .bg-animate {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(-45deg, #f1f5f9, #e0e7ff, #ede9fe, #f1f5f9);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+
+        .bg-animate::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(99, 102, 241, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(99, 102, 241, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* ОРОИШИ ПУШТИ ОКНОИ МЕНЮ (INTERNAL PANEL STYLE) */
         .main-panel {
-            background-color: var(--panel-bg);
+            background: var(--panel-bg);
+            backdrop-filter: blur(15px);
             padding: 40px;
-            border-radius: 25px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
-            border: 1px solid #3e4042;
-            max-width: 800px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.05);
             width: 90%;
+            max-width: 650px;
             text-align: center;
             position: relative;
+            z-index: 10;
+            overflow: hidden;
+            /* Барои он ки рамзҳо аз канори блок набароянд */
         }
 
-        input.name-input {
-            background: transparent;
-            border: none;
-            border-bottom: 2px solid var(--text-color);
+        /* АНИМАТСИЯИ МАХСУС БАРОИ ПУШТИ МЕНЮ */
+        #menu-panel::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent, rgba(99, 102, 241, 0.03), transparent);
+            z-index: -1;
+            animation: shine 6s linear infinite;
+        }
+
+        @keyframes shine {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        /* РАМЗҲОИ БАРНОМАСОЗӢ ДАР ПУШТИ МЕНЮ */
+        .code-symbol {
+            position: absolute;
+            font-size: 8rem;
+            font-weight: 900;
             color: var(--main-color);
-            font-size: 1.5rem;
-            padding: 10px;
-            text-align: center;
-            outline: none;
-            width: 60%;
-            margin-bottom: 15px;
+            opacity: 0.03;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .exit-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #fff;
+            border: 1.5px solid #e2e8f0;
+            padding: 5px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: var(--text-main);
+            transition: all 0.2s;
+        }
+
+        .exit-btn:hover {
+            background: #fee2e2;
+            border-color: var(--error-color);
+        }
+
+        .header-title {
+            font-size: 2.2rem;
+            font-weight: 900;
+            margin-bottom: 25px;
+            color: var(--text-main);
+        }
+
+        .header-title span {
+            color: var(--main-color);
         }
 
         .label {
             display: block;
             font-size: 0.7rem;
-            margin: 10px 0 5px;
-            color: var(--text-color);
-            letter-spacing: 2px;
+            margin: 15px 0 8px;
+            color: #64748b;
             text-transform: uppercase;
+            font-weight: 800;
         }
 
         .btn-group {
             display: flex;
             justify-content: center;
             gap: 8px;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
         }
 
         .btn {
-            background: none;
-            border: 1px solid var(--text-color);
-            color: var(--text-color);
+            background: #fff;
+            border: 1.5px solid #e2e8f0;
             padding: 8px 16px;
-            cursor: pointer;
-            border-radius: 8px;
-            font-weight: bold;
-            transition: 0.2s;
-        }
-
-        .btn.active {
-            color: var(--main-color);
-            border-color: var(--main-color);
-            background: rgba(226, 183, 20, 0.1);
-        }
-
-        .start-btn {
-            background: var(--main-color);
-            color: #000;
-            border: none;
-            padding: 12px 40px;
             border-radius: 10px;
-            font-weight: bold;
-            font-size: 1rem;
-            margin-top: 20px;
             cursor: pointer;
-        }
-
-        .exit-btn {
-            background: rgba(202, 71, 84, 0.1);
-            color: var(--error-color);
-            border: 1px solid var(--error-color);
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.7rem;
+            font-weight: 700;
             transition: 0.3s;
         }
 
-        .exit-btn:hover {
-            background: var(--error-color);
+        .btn:hover {
+            border-color: var(--main-color);
+        }
+
+        .btn.active {
+            background: var(--main-color);
             color: #fff;
-        }
-
-        #game-panel {
-            text-align: left;
-        }
-
-        .stats {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            font-size: 1.1rem;
-        }
-
-        .stat-group {
-            display: flex;
-            gap: 30px;
-        }
-
-        .stat-item span {
-            color: var(--main-color);
-            font-weight: bold;
+            border-color: var(--main-color);
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3);
         }
 
         #typing-area {
-            font-size: 1.6rem;
-            line-height: 1.4;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.8rem;
+            line-height: 1.6;
+            text-align: left;
+            color: #cbd5e1;
+            margin-top: 20px;
             min-height: 120px;
-            position: relative;
             word-break: break-all;
         }
 
-        .char {
-            color: var(--text-color);
-            border-left: 2px solid transparent;
-        }
-
         .char.correct {
-            color: var(--sub-color) !important;
+            color: var(--text-main);
         }
 
         .char.incorrect {
-            color: var(--error-color) !important;
-            background: rgba(202, 71, 84, 0.2);
-            text-decoration: underline;
+            color: var(--error-color);
+            background: rgba(239, 68, 68, 0.1);
+            border-radius: 4px;
+        }
+
+        .char.incorrect::after {
+            content: attr(data-user-char);
+            position: absolute;
+            top: -20px;
+            left: 0;
+            font-size: 0.9rem;
+            color: var(--error-color);
+            font-weight: bold;
+            background: white;
+            padding: 0 4px;
+            border-radius: 4px;
         }
 
         .char.current {
-            border-left: 2px solid var(--main-color);
+            border-bottom: 3px solid var(--main-color);
+            color: var(--main-color);
+            animation: blink 1s infinite;
         }
 
-        #hidden-input {
-            position: absolute;
-            opacity: 0;
-            pointer-events: none;
+        @keyframes blink {
+            50% {
+                border-color: transparent;
+            }
         }
 
         #pause-overlay {
             display: none;
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(44, 46, 49, 0.9);
-            border-radius: 25px;
-            z-index: 10;
-            flex-direction: column;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            z-index: 100;
             justify-content: center;
             align-items: center;
         }
 
-        .leaderboard {
-            margin-top: 20px;
-            font-size: 0.8rem;
-            border-top: 1px solid #3e4042;
-            padding-top: 10px;
-            text-align: center;
+        .pause-text {
+            background: var(--main-color);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 20px;
+            font-weight: 800;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+            animation: pulse 1.5s infinite;
         }
 
-        .record-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 3px 0;
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
         }
 
-        /* ИН ҶО СЕРТИФИКАТ КАЛОН КАРДА ШУД */
-        .certificate {
+        #result-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            z-index: 110;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-card {
             background: #fff;
-            color: #000;
-            padding: 60px;
-            border: 20px double var(--main-color);
+            padding: 40px;
+            border-radius: 30px;
             text-align: center;
+            width: 80%;
+            max-width: 500px;
+            position: relative;
+        }
+
+        #hidden-input {
+            position: fixed;
+            top: -100px;
+            left: -100px;
+            opacity: 0;
+        }
+
+        .start-btn {
+            background: var(--main-color);
+            color: #fff;
+            border: none;
+            padding: 15px 50px;
             border-radius: 15px;
-            max-width: 900px;
-            width: 95%;
+            font-weight: 800;
+            margin-top: 25px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.1rem;
+            transition: 0.3s;
         }
 
-        .certificate h2 {
-            font-size: 2.8rem;
-            margin: 0;
+        .start-btn:hover {
+            filter: brightness(1.1);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
         }
 
-        .cert-name {
-            font-size: 4.5rem;
-            color: #b8860b;
-            margin: 25px 0;
-            font-family: serif;
-            font-weight: bold;
-            border-bottom: 4px solid #b8860b;
-            display: inline-block;
+        .stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
         }
 
-        .cert-details {
-            font-size: 1.6rem;
-            margin: 15px 0;
-            color: #333;
+        .stat-item {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 15px;
+            border: 1px solid #e2e8f0;
         }
 
-        .cert-details span {
-            font-weight: bold;
-            color: #000;
+        .stat-num {
+            display: block;
             font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--main-color);
         }
     </style>
 </head>
 
-<body onclick="document.getElementById('hidden-input').focus()">
+<body onclick="forceFocus()">
+
+    <div class="bg-animate"></div>
 
     <div id="menu-panel" class="main-panel">
-        <h2 style="color: var(--sub-color); margin-bottom: 10px;">DevType <span
-                style="color:var(--main-color)">Tajikistan</span></h2>
-        <input type="text" id="user-name" class="name-input" placeholder="Номи барномасоз..." autocomplete="off">
+        <div class="code-symbol" style="top: -20px; left: -20px;">{ }</div>
+        <div class="code-symbol" style="bottom: -20px; right: -20px; font-size: 6rem;">&lt;/&gt;</div>
 
-        <span class="label">Забони барномасозӣ</span>
+        <h1 class="header-title">DevType <span>Tajikistan</span></h1>
+
+        <input type="text" id="user-name"
+            style="padding:15px; border-radius:15px; border:2px solid #e2e8f0; width:85%; text-align:center; outline:none; font-size: 1rem;"
+            placeholder="Номи ту...">
+
+        <span class="label">Забони код</span>
         <div class="btn-group">
-            <button onclick="setMode('html')" id="btn-html" class="btn active">HTML</button>
-            <button onclick="setMode('css')" id="btn-css" class="btn">CSS</button>
-            <button onclick="setMode('js')" id="btn-js" class="btn">JS</button>
+            <button onclick="setMode('html')" id="m-html" class="btn active">HTML</button>
+            <button onclick="setMode('css')" id="m-css" class="btn">CSS</button>
+            <button onclick="setMode('js')" id="m-js" class="btn">JS</button>
         </div>
 
-        <span class="label">Вақт (сония)</span>
-        <div class="btn-group" id="time-group">
-            <button onclick="setTime(15)" class="btn">15</button>
-            <button onclick="setTime(30)" class="btn active">30</button>
-            <button onclick="setTime(60)" class="btn">60</button>
+        <span class="label">Вақт</span>
+        <div class="btn-group">
+            <button onclick="setTime(15)" id="t-15" class="btn">15с</button>
+            <button onclick="setTime(30)" id="t-30" class="btn active">30с</button>
+            <button onclick="setTime(60)" id="t-60" class="btn">60с</button>
         </div>
 
-        <button class="start-btn" onclick="startGame()">ОҒОЗ КАРДАН</button>
-
-        <div class="leaderboard">
-            <span class="label">Рекордҳои ту</span>
-            <div id="records-list"></div>
+        <span class="label">Душворӣ</span>
+        <div class="btn-group">
+            <button onclick="setLevel('easy')" id="l-easy" class="btn">Осон</button>
+            <button onclick="setLevel('mid')" id="l-mid" class="btn active">Миёна</button>
+            <button onclick="setLevel('hard')" id="l-hard" class="btn">Pro</button>
         </div>
+
+        <button class="start-btn" onclick="startGame()">ОҒОЗИ БОЗӢ</button>
     </div>
 
     <div id="game-panel" class="main-panel" style="display: none;">
-        <div id="pause-overlay">
-            <h1 style="color: var(--main-color);">ПАУЗА</h1>
-            <p>Барои идома ESC-ро пахш кунед</p>
+        <button class="exit-btn" onclick="location.reload()">БАРОМАД</button>
+        <div style="display:flex; justify-content: flex-start; align-items:center; margin-bottom: 10px;">
+            <span id="timer-val" style="font-weight:900; font-size:2rem; color:var(--main-color);">30</span>
+            <span
+                style="margin-left: 15px; font-size:0.7rem; color:var(--text-sub); background: #eee; padding: 5px 10px; border-radius: 8px;">ESC
+                - ПАУЗА</span>
         </div>
-        <div class="stats">
-            <div class="stat-group">
-                <div class="stat-item">WPM: <span id="wpm">0</span></div>
-                <div class="stat-item">Дақиқият: <span id="accuracy">100</span>%</div>
-                <div class="stat-item">Вақт: <span id="timer">30</span></div>
-                <div class="stat-item">Блок: <span id="progress">1</span>/8</div>
-            </div>
-            <button class="exit-btn" onclick="location.reload()">БАРОМАД</button>
-        </div>
-        <input type="text" id="hidden-input" autocomplete="off" spellcheck="false">
         <div id="typing-area"></div>
+        <input type="text" id="hidden-input" autocomplete="off" spellcheck="false">
     </div>
 
-    <div id="cert-modal"
-        style="display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.95); justify-content: center; align-items: center; z-index: 200;">
-        <div class="certificate">
-            <h2>СЕРТИФИКАТИ МАҲОРАТ</h2>
-            <div id="cert-display-name" class="cert-name">Шероз</div>
-            <div class="cert-details">Суръати чоп: <span id="cert-wpm-val">0</span> WPM</div>
-            <div class="cert-details">Дақиқият: <span id="cert-acc-val">0</span>%</div>
-            <div class="cert-details">Калимаҳо: <span id="cert-words-val">0</span></div>
-            <div class="cert-details" style="color: var(--error-color);">Хатогиҳо: <span id="cert-errors-val">0</span>
+    <div id="pause-overlay">
+        <div class="pause-text">ESC-РО ПАХШ КУНЕД БАРОИ ДАВОМ</div>
+    </div>
+
+    <div id="result-overlay">
+        <div class="modal-card">
+            <h1 id="res-name" style="margin:0; color:var(--text-main);">User</h1>
+            <div class="stat-grid">
+                <div class="stat-item"><span class="label">WPM</span><span id="res-wpm" class="stat-num">0</span></div>
+                <div class="stat-item"><span class="label">Хатоҳо</span><span id="res-errors" class="stat-num">0</span>
+                </div>
+                <div class="stat-item"><span class="label">Калимаҳо</span><span id="res-words" class="stat-num">0</span>
+                </div>
+                <div class="stat-item"><span class="label">CPS</span><span id="res-cps" class="stat-num">0</span></div>
             </div>
-            <button class="btn"
-                style="margin-top:30px; font-size: 1.4rem; padding: 12px 30px; color:#000; border-color:#000;"
-                onclick="location.reload()">АЗ НАВ</button>
+            <button class="start-btn" onclick="location.reload()">БОЗГАШТ</button>
         </div>
     </div>
 
     <script>
         const library = {
-            html: [
-                "<div class='container-fluid'>",
-                "<html><head><title>App</title></head>",
-                "<body><header class='nav-wrapper'>",
-                "<section id='hero-section'><h1>Welcome</h1>",
-                "<img src='assets/img/hero.jpg' alt='Hero'>",
-                "<a href='https://github.com' target='_blank'>",
-                "<ul class='menu-list'><li>Home Page</li></ul>",
-                "<button type='submit' class='btn-success'>",
-                "<form action='/api/v1/auth' method='POST'>",
-                "<footer class='main-footer'><p>Copyright</p></footer>",
-                "<table><thead><tr><th>Username</th></tr></thead></table>",
-                "<nav><ol><li>About</li><li>Contact</li></ol></nav>"
-            ],
-            css: [
-                "body { margin: 0; padding: 0; box-sizing: border-box; }",
-                ".flex-center { display: flex; align-items: center; }",
-                "h1 { color: #f1c40f; font-size: 2rem; font-weight: 700; }",
-                ".card { background: #1a1a1a; border: 1px solid #333; }",
-                "@media screen and (max-width: 600px) { .row { gap: 10px; } }",
-                "button:active { transform: scale(0.95); opacity: 0.8; }",
-                "input:focus { border-color: var(--main-color); outline: none; }",
-                ".glass-effect { backdrop-filter: blur(10px); background: none; }",
-                "span.label { color: #666; text-transform: lowercase; }",
-                "p.text-muted { font-style: italic; color: #888; }"
-            ],
-            js: [
-                "const settings = { theme: 'dark', lang: 'en', id: 101 };",
-                "async function getData() { const res = await fetch(url); }",
-                "if (score >= limit) { return notify('Win'); }",
-                "const users = ['Admin', 'Editor', 'Viewer', 'Guest'];",
-                "document.querySelector('.app').innerHTML = 'Loading...';",
-                "const result = items.map(x => x.price * 1.2);",
-                "localStorage.setItem('session_token', btoa(token));",
-                "window.addEventListener('resize', () => handleResize());",
-                "class AppController { constructor() { this.init(); } }",
-                "export const VERSION = '3.0.1'; console.log(VERSION);"
-            ]
+            html: {
+                easy: ["<div>", "<span>", "<h1>", "<a>", "<img>"],
+                mid: ["<section>", "<footer>", "<button>", "<input>", "<ul><li>"],
+                hard: ["<template>", "<svg viewBox='0 0 100 100'>", "<meta charset='UTF-8'>"]
+            },
+            css: {
+                easy: ["color:red;", "margin:0;", "padding:10px;"],
+                mid: ["display:flex;", "justify-content:center;", "border-radius:12px;"],
+                hard: ["backdrop-filter:blur(10px);", "grid-template-columns:1fr 1fr;"]
+            },
+            js: {
+                easy: ["let x=5;", "const y=10;", "alert('Hi');"],
+                mid: ["function sum(a,b)", "arr.push(item);", "if(x === y)"],
+                hard: ["async function getData()", "new Promise((res, rej))"]
+            }
         };
 
-        let currentMode = 'html', timeLeft = 30, selectedTime = 30, timer = null, isRunning = false, isPaused = false;
-        let charIndex = 0, currentBlockIndex = 0, gameBlocks = [];
-        let totalErrorsCount = 0, totalTypedCharsCount = 0;
+        let currentMode = 'html', currentLevel = 'mid', gameTime = 30, timeLeft = 30;
+        let charIndex = 0, currentBlockStr = "", isRunning = false, isPaused = false, timer = null;
+        let totalChars = 0, errors = 0, correctChars = 0;
 
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function playSound(freq, type, dur) {
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = type; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + dur);
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.start(); osc.stop(audioCtx.currentTime + dur);
-        }
+        function setMode(m) { currentMode = m; updateUI(); }
+        function setTime(t) { gameTime = t; timeLeft = t; updateUI(); }
+        function setLevel(l) { currentLevel = l; updateUI(); }
 
-        function setMode(m) {
-            currentMode = m;
-            document.querySelectorAll('.btn-group .btn').forEach(b => {
-                if (['html', 'css', 'js'].includes(b.id?.replace('btn-', ''))) b.classList.toggle('active', b.id === 'btn-' + m);
+        function updateUI() {
+            document.querySelectorAll('.btn').forEach(b => {
+                b.classList.remove('active');
+                if (b.id === 'm-' + currentMode || b.id === 't-' + gameTime || b.id === 'l-' + currentLevel) b.classList.add('active');
             });
+            document.getElementById('timer-val').innerText = timeLeft;
         }
 
-        function setTime(s) {
-            selectedTime = s; timeLeft = s;
-            document.querySelectorAll('#time-group .btn').forEach(b => b.classList.toggle('active', parseInt(b.innerText) === s));
+        function forceFocus() {
+            if (document.getElementById('game-panel').style.display === 'block' && !isPaused) {
+                document.getElementById('hidden-input').focus();
+            }
         }
-
-        function updateLeaderboard() {
-            const records = JSON.parse(localStorage.getItem('devTypeRecords') || '[]');
-            const list = document.getElementById('records-list');
-            list.innerHTML = records.slice(0, 3).map(r => `<div class="record-item"><span>${r.name}</span><span>${r.wpm} WPM</span></div>`).join('');
-        }
-        updateLeaderboard();
 
         function startGame() {
-            const name = document.getElementById('user-name').value.trim();
-            if (!name) return alert("Номи худро ворид кунед!");
+            if (!document.getElementById('user-name').value) return alert("Номро ворид кунед!");
             document.getElementById('menu-panel').style.display = 'none';
             document.getElementById('game-panel').style.display = 'block';
-            gameBlocks = [...library[currentMode]].sort(() => Math.random() - 0.5).slice(0, 8);
-            currentBlockIndex = 0; totalErrorsCount = 0; totalTypedCharsCount = 0;
-            isRunning = false; timeLeft = selectedTime;
-            document.getElementById('timer').innerText = timeLeft;
-            renderBlock();
+            generateNewBlock();
+            setTimeout(forceFocus, 50);
         }
 
-        function renderBlock() {
-            document.getElementById('progress').innerText = currentBlockIndex + 1;
+        function generateNewBlock() {
+            let pool = library[currentMode][currentLevel];
+            let selected = [];
+            for (let i = 0; i < 4; i++) selected.push(pool[Math.floor(Math.random() * pool.length)]);
+            currentBlockStr = selected.join(" ");
             const area = document.getElementById('typing-area');
             area.innerHTML = "";
-            gameBlocks[currentBlockIndex].split("").forEach((c) => {
+            currentBlockStr.split("").forEach(c => {
                 const span = document.createElement('span');
-                span.className = 'char';
                 span.innerText = c;
-                span.dataset.orig = c;
+                span.className = 'char';
                 area.appendChild(span);
             });
-            document.querySelectorAll('.char')[0].classList.add('current');
             charIndex = 0;
+            document.querySelectorAll('.char')[0].classList.add('current');
             document.getElementById('hidden-input').value = "";
         }
 
+        window.addEventListener('keydown', (e) => {
+            if (e.key === "Escape" && document.getElementById('game-panel').style.display === 'block') {
+                togglePause();
+            }
+        });
+
+        function togglePause() {
+            if (!isRunning) return;
+            if (!isPaused) {
+                isPaused = true;
+                clearInterval(timer);
+                document.getElementById('pause-overlay').style.display = 'flex';
+            } else {
+                isPaused = false;
+                document.getElementById('pause-overlay').style.display = 'none';
+                timer = setInterval(updateTimer, 1000);
+                forceFocus();
+            }
+        }
+
+        function updateTimer() {
+            if (timeLeft > 0) {
+                timeLeft--;
+                document.getElementById('timer-val').innerText = timeLeft;
+            } else {
+                finishGame();
+            }
+        }
+
         document.getElementById('hidden-input').addEventListener('input', (e) => {
-            if (isPaused) return;
-            if (!isRunning) { isRunning = true; startTimer(); }
+            if (isPaused || timeLeft <= 0) return;
+            if (!isRunning) { isRunning = true; timer = setInterval(updateTimer, 1000); }
 
             const chars = document.querySelectorAll('.char');
-            const inputVal = e.target.value;
-
-            if (inputVal.length > charIndex) {
-                playSound(400, 'sine', 0.05);
-                totalTypedCharsCount++;
+            const val = e.target.value;
+            if (val.length > charIndex) {
+                if (val[val.length - 1] === currentBlockStr[charIndex]) correctChars++;
+                else errors++;
             }
-            charIndex = inputVal.length;
-
+            charIndex = val.length;
             chars.forEach((char, i) => {
                 char.classList.remove('current', 'correct', 'incorrect');
-                const origChar = char.dataset.orig;
-                if (i < charIndex) {
-                    if (inputVal[i] === origChar) char.classList.add('correct');
-                    else {
-                        char.classList.add('incorrect');
-                        char.innerText = inputVal[i];
-                        if (i === charIndex - 1) { playSound(150, 'square', 0.1); totalErrorsCount++; }
-                    }
-                } else {
-                    char.innerText = origChar;
-                }
+                if (i < charIndex) char.classList.add(val[i] === currentBlockStr[i] ? 'correct' : 'incorrect');
             });
-
             if (charIndex < chars.length) chars[charIndex].classList.add('current');
-            else {
-                currentBlockIndex++;
-                if (currentBlockIndex < 8) renderBlock();
-                else finishGame();
-            }
-            updateStats();
+            else generateNewBlock();
         });
-
-        window.addEventListener('keydown', (e) => {
-            if (e.key === "Escape" && isRunning) {
-                isPaused = !isPaused;
-                document.getElementById('pause-overlay').style.display = isPaused ? 'flex' : 'none';
-            }
-        });
-
-        function startTimer() {
-            if (timer) clearInterval(timer);
-            timer = setInterval(() => {
-                if (!isPaused) {
-                    if (timeLeft > 0) { timeLeft--; document.getElementById('timer').innerText = timeLeft; }
-                    else { finishGame(); }
-                    updateStats();
-                }
-            }, 1000);
-        }
-
-        function updateStats() {
-            let timeElapsed = (selectedTime - timeLeft) || 1;
-            let wpm = Math.round((totalTypedCharsCount / 5) / (timeElapsed / 60)) || 0;
-            let acc = Math.round(((totalTypedCharsCount - totalErrorsCount) / totalTypedCharsCount) * 100) || 100;
-            document.getElementById('wpm').innerText = wpm;
-            document.getElementById('accuracy').innerText = (acc < 0) ? 0 : acc;
-        }
 
         function finishGame() {
             clearInterval(timer);
-            document.getElementById('cert-modal').style.display = 'flex';
-            document.getElementById('cert-display-name').innerText = document.getElementById('user-name').value;
-            document.getElementById('cert-wpm-val').innerText = document.getElementById('wpm').innerText;
-            document.getElementById('cert-acc-val').innerText = document.getElementById('accuracy').innerText;
-            document.getElementById('cert-words-val').innerText = Math.round(totalTypedCharsCount / 5);
-            document.getElementById('cert-errors-val').innerText = totalErrorsCount;
-
-            let records = JSON.parse(localStorage.getItem('devTypeRecords') || '[]');
-            records.push({ name: document.getElementById('user-name').value, wpm: parseInt(document.getElementById('wpm').innerText) });
-            records.sort((a, b) => b.wpm - a.wpm);
-            localStorage.setItem('devTypeRecords', JSON.stringify(records.slice(0, 3)));
-            updateLeaderboard();
+            isRunning = false;
+            const timeSpent = gameTime - timeLeft;
+            const wordsCount = Math.round(correctChars / 5);
+            const wpm = Math.round((wordsCount / timeSpent) * 60) || 0;
+            const cps = (correctChars / timeSpent).toFixed(1) || 0;
+            document.getElementById('res-name').innerText = document.getElementById('user-name').value;
+            document.getElementById('res-wpm').innerText = wpm;
+            document.getElementById('res-errors').innerText = errors;
+            document.getElementById('res-words').innerText = wordsCount;
+            document.getElementById('res-cps').innerText = cps;
+            document.getElementById('result-overlay').style.display = 'flex';
         }
     </script>
 </body>
